@@ -1,0 +1,15 @@
+{
+  "PORT": 3003,
+  "MONGO_DB_NAME": "ninja_db",
+  "MONGO_USER": "ninja",
+  "MONGO_PASSWORD": "ojokjfoqjfoiqjdpoqwjd2131jrdj12098dj1208dj120",
+  "MONGO_PORT": "27017",
+  "MONGO_HOST": "localhost",
+  "SECRET_KEY": "qweqwdu89102389u348u9rf23jdf38i92oj",
+  "ADMIN_SECRET": "ioeuqoieqwoieuqwoi",
+  "SMTP_HOST": "localhost",
+  "SMTP_USER": "user",
+  "SMTP_PASS": "pass",
+  "SMTP_PORT": 1025,
+  "SMTP_FROM": "Ninja <no-reply@ninja.net>"
+}
