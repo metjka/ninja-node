@@ -1,28 +1,34 @@
 import 'reflect-metadata';
 import './users/user.controller';
+import './ping/ping.controller';
 import {InversifyExpressServer} from 'inversify-express-utils';
-import {Container} from 'inversify';
 import * as bodyParser from 'body-parser';
-import TYPES from './constant/types';
-import {UserService} from "./users/user.service";
-
-// load everything needed to the Container
-let container = new Container();
-container.bind<UserService>(TYPES.UserService).to(UserService);
-
+import container from './container/container';
+import TYPES from './container/types';
+import {Config} from './db/mongo';
+import {errorHandler} from './utils/request.utils';
+import {CustomAuthProvider} from './auth/auth.provider';
 // start the server
-let server = new InversifyExpressServer(container);
+const server = new InversifyExpressServer(container, null, {rootPath: '/api'}, null, CustomAuthProvider);
 
+const config: Config = container.get(TYPES.Config);
 server.setConfig((app) => {
-  app.use(bodyParser.urlencoded({
-    extended: true
-  }));
+  app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    next()
+  });
+  app.use(bodyParser.urlencoded({extended: true}));
   app.use(bodyParser.json());
 });
+server.setErrorConfig(errorHandler);
 
 const app = server.build();
-let instance = app.listen(3000, () => {
-  console.log('Server started on port 3000 :)');
+let instance = app.listen(config.PORT, (err) => {
+  if (err) {
+    console.log(`Error occurred: ${err}`);
+  }
+  console.log(`Server started on port ${config.PORT} :)`);
 });
-
 export default app;
