@@ -12,7 +12,7 @@ export class UserController implements interfaces.Controller {
 
   @httpPost('/register')
   public register(@response() res: Response) {
-    return res.
+    return res.json('zalupa');
   }
 
 

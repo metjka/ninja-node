@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": "dist",
+    "sourceMap": true,
+    "types": ["reflect-metadata", "node"],
+    "typeRoots": ["node_modules/@types"],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+
+    "baseUrl": "."
+  },
+  "include": ["app/**/*.ts", "lib/**/*.ts"],
+  "exclude": ["node_modules/"]
+}
