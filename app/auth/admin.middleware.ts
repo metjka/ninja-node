@@ -1,6 +1,6 @@
+import * as express from 'express';
 import {injectable} from 'inversify';
 import {BaseMiddleware} from 'inversify-express-utils';
-import * as express from 'express';
 
 @injectable()
 export class AdminMiddleware extends BaseMiddleware {

@@ -6,7 +6,8 @@
   "scripts": {
     "start": "tsc && node dist/app.js",
     "test": "mocha --require ts-node/register --ui bdd --exit \"app/**/*.spec.ts\"",
-    "maildev": "maildev --incoming-user user --incoming-pass pass -v"
+    "maildev": "maildev --incoming-user user --incoming-pass pass -v",
+    "lint:fix": "tslint --fix \"app/**/*.ts\" -t verbose -p tsconfig.json"
   },
   "author": "",
   "license": "ISC",
@@ -49,6 +50,7 @@
     "@types/pug": "2.0.4",
     "chai": "4.2.0",
     "mocha": "^6.1.4",
+    "tslint": "^5.18.0",
     "nyc": "14.1.1",
     "supertest": "4.0.2",
     "ts-node": "8.3.0",

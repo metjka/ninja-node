@@ -1,6 +1,6 @@
-import {controller, httpGet, interfaces, response, TYPE} from 'inversify-express-utils';
 import {Response} from 'express';
 import {inject} from 'inversify';
+import {controller, httpGet, interfaces, response, TYPE} from 'inversify-express-utils';
 import TYPES from '../container/types';
 
 @controller('/ping')

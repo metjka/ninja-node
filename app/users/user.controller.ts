@@ -1,5 +1,6 @@
-import 'reflect-metadata';
 import * as express from 'express';
+import {check} from 'express-validator';
+import {inject} from 'inversify';
 import {
   controller,
   httpPost,
@@ -7,14 +8,13 @@ import {
   request,
   requestBody,
   requestHeaders,
-  response
+  response,
 } from 'inversify-express-utils';
-import {inject} from 'inversify';
+import 'reflect-metadata';
 import TYPES from '../container/types';
-import {UserService} from './user.service';
-import {check} from 'express-validator';
 import {validate} from '../utils/request.utils';
-import {UserLogin, UserRegister} from './user.dto';
+import {IUserLogin, IUserRegister} from './user.dto';
+import {UserService} from './user.service';
 import Controller = interfaces.Controller;
 
 const userRegistretionValidators = [
@@ -22,7 +22,7 @@ const userRegistretionValidators = [
   check('login').isLength({min: 3}),
   check('password')
     .isLength({min: 5}).withMessage('Must be at least 5 chars long')
-    .matches(/\d/).withMessage('Must contain a number')
+    .matches(/\d/).withMessage('Must contain a number'),
 ];
 
 @controller('/users')
@@ -35,33 +35,33 @@ export class UserController implements Controller {
 
   @httpPost('/login', validate([
     check('password').exists(),
-    check('login').exists()
+    check('login').exists(),
   ]))
   public login(@response() res: express.Response,
-               @requestBody() user?: UserLogin) {
+               @requestBody() user?: IUserLogin) {
     return Promise.resolve()
       .then(() => this.userService.login(user))
-      .then(result => res.json(result));
+      .then((result) => res.json(result));
   }
 
   @httpPost('/register',
     validate(userRegistretionValidators))
   public register(@response() res: express.Response,
                   @request() req: express.Request,
-                  @requestBody() user?: UserRegister) {
+                  @requestBody() user?: IUserRegister) {
     return Promise.resolve()
       .then(() => this.userService.register(user))
-      .then(result => res.json(result));
+      .then((result) => res.json(result));
   }
 
   @httpPost('/admin/register/',
     validate(userRegistretionValidators))
   public registerAdmin(@response() res: express.Response,
                        @request() req: express.Request,
-                       @requestBody() user?: UserRegister,
+                       @requestBody() user?: IUserRegister,
                        @requestHeaders('AdminSecret') adminSecret?: string) {
     return Promise.resolve()
       .then(() => this.userService.registerAdmin(user, adminSecret))
-      .then(result => res.json(result));
+      .then((result) => res.json(result));
   }
 }

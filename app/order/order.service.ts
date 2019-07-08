@@ -1,13 +1,13 @@
 import {inject, injectable} from 'inversify';
-import TYPES from '../container/types';
-import {Model} from 'mongoose';
-import {IOrderModel} from './order.model';
-import {ClientError, NotFoundError, parseObjectId, streq} from '../utils/request.utils';
-import {IProduct, IProductModel} from '../product/product.model';
-import {MailService} from '../mail/mail.service';
 import {interfaces, TYPE} from 'inversify-express-utils';
-import {IConfig, IReport} from '../utils/interfaces/interfaces';
 import * as _ from 'lodash';
+import {Model} from 'mongoose';
+import TYPES from '../container/types';
+import {MailService} from '../mail/mail.service';
+import {IProduct, IProductModel} from '../product/product.model';
+import {IConfig, IReport} from '../utils/interfaces/interfaces';
+import {ClientError, NotFoundError, parseObjectId, streq} from '../utils/request.utils';
+import {IOrderModel} from './order.model';
 import moment = require('moment');
 
 @injectable()
@@ -17,26 +17,26 @@ export class OrderService {
     @inject(TYPES.OrderModel) private orderModel: Model<IOrderModel>,
     @inject(TYPES.ProductModel) private productModel: Model<IProductModel>,
     @inject(TYPES.MailService) private mailService: MailService,
-    @inject(TYPE.HttpContext) private httpContext: interfaces.HttpContext
+    @inject(TYPE.HttpContext) private httpContext: interfaces.HttpContext,
   ) {
   }
 
-  public async create(order: {orderPositions: {number: number; item: string}[]}) {
+  public async create(order: {orderPositions: Array<{number: number; item: string}>}) {
     try {
-      const ids = order.orderPositions.map(item => parseObjectId(item.item));
+      const ids = order.orderPositions.map((item) => parseObjectId(item.item));
       const products: IProduct[] = await this.productModel.find({_id: {$in: ids}}).exec();
       if (products.length !== ids.length) {
-        throw new NotFoundError(`Some of products doesn't exist!`)
+        throw new NotFoundError(`Some of products doesn't exist!`);
       }
-      const orders = order.orderPositions.map(orderPosition => {
-        const product = products.find(product => streq(product._id, orderPosition.item));
+      const orders = order.orderPositions.map((orderPosition) => {
+        const product = products.find((pr) => streq(pr._id, orderPosition.item));
         return {
           number: orderPosition.number,
           productId: product._id,
           price: product.price,
           total: orderPosition.item,
-          name: product.name
-        }
+          name: product.name,
+        };
       });
 
       const newOrder = new this.orderModel();
@@ -46,17 +46,21 @@ export class OrderService {
       const savedOrder = await newOrder.save();
       const savedOrderJson = savedOrder.toJSON();
 
-      setImmediate(() => {
-        this.mailService.sendEmail(
-          this.config.SMTP_FROM,
-          this.httpContext.user.details.email,
-          {
-            userName: this.httpContext.user.details.fullName,
-            orders: savedOrderJson.orderPositions,
-            total: savedOrder.total
-          },
-          'new-order',
-          'New order')
+      setImmediate(async () => {
+        try {
+          await this.mailService.sendEmail(
+            this.config.SMTP_FROM,
+            this.httpContext.user.details.email,
+            {
+              userName: this.httpContext.user.details.fullName,
+              orders: savedOrderJson.orderPositions,
+              total: savedOrder.total,
+            },
+            'new-order',
+            'New order');
+        } catch (e) {
+          console.log(e.message);
+        }
       });
       return savedOrderJson;
     } catch (e) {
@@ -68,7 +72,7 @@ export class OrderService {
     try {
       return await this.orderModel.find().lean().exec();
     } catch (e) {
-      throw new ClientError(`Cant get all orders! ${e}`)
+      throw new ClientError(`Cant get all orders! ${e}`);
     }
   }
 
@@ -78,9 +82,9 @@ export class OrderService {
         createdAt: {
           $gte: moment().subtract(1, 'd').toDate(),
           $lt: moment().toDate(),
-        }
+        },
       }).exec();
-      const gained = orders.map(order => order.total).reduce((acc, val) => _.add(acc, val), 0);
+      const gained = orders.map((order) => order.total).reduce((acc, val) => _.add(acc, val), 0);
       const orderItems = orders
         .reduce((acc, val) => {
           acc.push(...val.orderPositions);
@@ -100,16 +104,16 @@ export class OrderService {
         .find({_id: {$in: Object.keys(numberOfSoldProducts)}})
         .lean().exec();
       const soldProducts = products
-        .map(prod => ({...prod, timesSold: numberOfSoldProducts[prod._id + '']}))
+        .map((prod) => ({...prod, timesSold: numberOfSoldProducts[prod._id + '']}))
         .sort((prod1, prod2) => prod2.timesSold - prod1.timesSold);
       return {
-        gained: gained,
-        soldProducts: soldProducts,
+        gained,
+        soldProducts,
         topSeller: soldProducts[0],
-        time: moment().format('YYYY MMM DD')
+        time: moment().format('YYYY MMM DD'),
       };
     } catch (e) {
-      throw new ClientError(`Cant get reports! ${e}`)
+      throw new ClientError(`Cant get reports! ${e}`);
     }
   }
 }

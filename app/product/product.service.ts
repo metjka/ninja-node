@@ -1,18 +1,18 @@
 import {inject, injectable} from 'inversify';
-import TYPES from '../container/types';
+import {interfaces, TYPE} from 'inversify-express-utils';
+import * as _ from 'lodash';
+import {ObjectId, ObjectID} from 'mongodb';
 import {Model} from 'mongoose';
 import * as int32 from 'mongoose-int32';
-import {IProduct, IProductModel} from './product.model';
-import {interfaces, TYPE} from 'inversify-express-utils';
-import {ObjectId, ObjectID} from 'mongodb';
+import TYPES from '../container/types';
 import {NotFoundError} from '../utils/request.utils';
-import * as _ from 'lodash';
+import {IProduct, IProductModel} from './product.model';
 
 @injectable()
 export class ProductService {
   constructor(
     @inject(TYPES.ProductModel) private productModel: Model<IProductModel>,
-    @inject(TYPE.HttpContext) private httpContext: interfaces.HttpContext
+    @inject(TYPE.HttpContext) private httpContext: interfaces.HttpContext,
   ) {
   }
 
@@ -34,7 +34,7 @@ export class ProductService {
 
   public async getAll(page = 0, categories: ObjectID[] = [], productTitle: string = ''): Promise<any> {
     const matchers: any = [
-      {name: {$regex: productTitle, $options: 'i'}}
+      {name: {$regex: productTitle, $options: 'i'}},
     ];
     if (categories && categories.length) {
       matchers.push({category: {$in: categories}});
@@ -42,27 +42,27 @@ export class ProductService {
     const aggregations = [
       {
         $match: {
-          $and: matchers
-        }
+          $and: matchers,
+        },
       },
       {
         $facet: {
           metadata: [
             {$count: 'count'},
-            {$addFields: {page: int32.cast(page)}}
+            {$addFields: {page: int32.cast(page)}},
           ],
           data: [
             {$skip: page * 10},
-            {$limit: 10}
-          ]
-        }
+            {$limit: 10},
+          ],
+        },
       },
       {
         $unwind: {
           path: '$metadata',
-          preserveNullAndEmptyArrays: true
-        }
-      }
+          preserveNullAndEmptyArrays: true,
+        },
+      },
     ];
     return await this.productModel.aggregate(aggregations).exec()
       .then((res) => {

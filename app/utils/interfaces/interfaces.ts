@@ -16,7 +16,7 @@ export interface IConfig {
   SMTP_FROM: string;
 }
 
-export interface BaseUser {
+export interface IBaseUser {
   _id: string | number;
   login: string;
   roles: string[];
@@ -24,7 +24,7 @@ export interface BaseUser {
 
 export interface IReport {
   gained: number;
-  soldProducts: (IProduct & {timesSold: number})[];
+  soldProducts: Array<IProduct & {timesSold: number}>;
   topSeller: IProduct & {timesSold: number};
   time: string;
 }

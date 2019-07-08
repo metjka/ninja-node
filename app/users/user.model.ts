@@ -1,7 +1,7 @@
-import {Connection, Document, Schema} from 'mongoose';
 import {interfaces} from 'inversify';
-import TYPES from '../container/types';
 import {toLower} from 'lodash';
+import {Connection, Document, Schema} from 'mongoose';
+import TYPES from '../container/types';
 
 const userSchema = new Schema({
   login: {type: String, required: true, unique: true},
@@ -14,14 +14,14 @@ const userSchema = new Schema({
     set: toLower,
     validate: /[^@]+@[^.]+\..+/,
     required: true,
-    unique: true
-  }
+    unique: true,
+  },
 });
 
 userSchema.set('toJSON', {
   transform: (doc, ret, o) => {
     delete ret.password;
-  }
+  },
 });
 
 export function exportUserModel(context: interfaces.Context) {
