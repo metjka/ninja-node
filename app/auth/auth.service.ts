@@ -11,12 +11,7 @@ export class AuthService {
   ) {
   }
 
-  public getToken(req: Request): string {
-    return req.get('Auth');
-  }
-
   async getUser(token: string): Promise<any> {
-    const verify = jwt.verify(token, this.config.SECRET_KEY) as any;
-    return verify;
+    return jwt.verify(token, this.config.SECRET_KEY) as any;
   }
 }

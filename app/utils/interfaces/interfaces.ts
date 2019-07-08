@@ -1,3 +1,5 @@
+import {IProduct} from '../../product/product.model';
+
 export interface IConfig {
   ADMIN_SECRET: string;
   PORT: string;
@@ -22,7 +24,7 @@ export interface BaseUser {
 
 export interface IReport {
   gained: number;
-  soldProducts: number;
-  topSeller: number;
-
+  soldProducts: (IProduct & {timesSold: number})[];
+  topSeller: IProduct & {timesSold: number};
+  time: string;
 }

@@ -9,6 +9,18 @@ export class BadTokenError extends Error {
 }
 
 export class ClientError extends Error {
+  constructor(message, public code?: number) {
+    super(message);
+  }
+}
+
+export class NotFoundError extends Error {
+  constructor(message) {
+    super(message);
+  }
+}
+
+export class ServerError extends Error {
   constructor(message) {
     super(message);
   }
@@ -28,8 +40,11 @@ export const validate = validations => {
 };
 export const errorHandler = (app) => {
   app.use((err: Error, req, res, next) => {
+    if (err instanceof NotFoundError) {
+      return res.status(constants.HTTP_STATUS_NOT_FOUND).json(err.message)
+    }
     if (err instanceof ClientError) {
-      return res.status(constants.HTTP_STATUS_BAD_REQUEST).json(err.message)
+      return res.status(constants.HTTP_STATUS_BAD_REQUEST || err.code).json(err.message)
     }
     if (err instanceof BadTokenError) {
       return res.status(constants.HTTP_STATUS_UNAUTHORIZED).json(err.message)
@@ -45,6 +60,7 @@ export function parseObjectId(id: string | ObjectId): ObjectId {
     throw new ClientError('Bad id!')
   }
 }
+
 export function streq(...ids: any[]): boolean {
   return ids.map(id => id + ``).every((id, i, arr) => arr.indexOf(id) === 0);
 }

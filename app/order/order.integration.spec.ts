@@ -1,10 +1,13 @@
 import 'mocha';
-import app, {sendReport} from '../app';
+import app from '../app';
 import * as supertest from 'supertest';
 import {clearDb, registerAndLoginAdmin, registerAndLoginUser, userFactory} from '../utils/test.utils';
 import {expect} from 'chai'
 import {IProduct} from '../product/product.model';
 import {cleanUpMetadata} from 'inversify-express-utils';
+import {sendReport} from '../utils/report.utils';
+import container from '../container/container';
+import TYPES from '../container/types';
 
 describe('Order controller integration test', () => {
   let api;
@@ -95,7 +98,8 @@ describe('Order controller integration test', () => {
   });
 
   it('should send report email', async () => {
-    await sendReport()
+    const config = container.get(TYPES.Config);
+    await sendReport(config)
   });
   after(clearDb)
 });

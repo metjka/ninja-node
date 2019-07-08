@@ -54,9 +54,9 @@ export class ProductController {
                       @queryParam('title') title: string,
                       @queryParam('categories') categories: string []) {
     const parsedPage = _.isNaN(page) ? 0 : page;
-    const objectIds = categories.map(parseObjectId);
+    const objectIds = categories ? categories.map(parseObjectId) : [];
 
-    const products = await this.productService.getAll(parsedPage, objectIds, title);
+    const products = await this.productService.getAll(parsedPage, objectIds, title.toLowerCase());
     return res.json(products);
   }
 
