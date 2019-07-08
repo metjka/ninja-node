@@ -1,5 +1,6 @@
 import {validationResult} from 'express-validator';
 import {constants} from 'http2';
+import {ObjectId} from 'bson';
 
 export class BadTokenError extends Error {
   constructor(message: string) {
@@ -37,3 +38,13 @@ export const errorHandler = (app) => {
   })
 };
 
+export function parseObjectId(id: string | ObjectId): ObjectId {
+  try {
+    return new ObjectId(id);
+  } catch (e) {
+    throw new ClientError('Bad id!')
+  }
+}
+export function streq(...ids: any[]): boolean {
+  return ids.map(id => id + ``).every((id, i, arr) => arr.indexOf(id) === 0);
+}

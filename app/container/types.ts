@@ -1,12 +1,17 @@
 const TYPES = {
-  Config: 'Config',
+  Config: 'IConfig',
   UserService: 'UserService',
   MongoConnection: 'MongoConnection',
-  UserModel: 'UserModel',
-  Auth: 'AuthService',
-  UserId: 'UserId',
+  UserModel: 'IUserModel',
+  AuthService: 'AuthService',
   AuthMiddleware: 'AuthMiddleware',
   CategoryModel: 'CategoryModel',
-  ProductModel: 'IProductModel'
+  ProductModel: 'IProductModel',
+  ProductService: 'ProductService',
+  AdminMiddleware: 'AdminMiddleware',
+  CategoryService: 'CategoryService',
+  OrderService: 'OrderService',
+  OrderModel: 'OrderModel',
+  MailService: 'MailService'
 };
 export default TYPES

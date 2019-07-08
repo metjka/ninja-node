@@ -9,8 +9,9 @@
     "typeRoots": ["node_modules/@types"],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "skipLibCheck": true,
     "baseUrl": "."
   },
   "include": ["app/**/*.ts"],
-  "exclude": ["node_modules/"]
+  "exclude": ["node_modules/", "app/**/*.spec.ts"]
 }

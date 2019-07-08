@@ -1,9 +1,10 @@
 import 'mocha';
 import app from '../app';
 import * as supertest from 'supertest';
-import {userFactory} from '../utils/test.utils';
+import {clearDb, userFactory} from '../utils/test.utils';
 import {isJWT} from 'validator';
 import {expect} from 'chai'
+import {cleanUpMetadata} from 'inversify-express-utils';
 
 describe('User controller integration test', () => {
   let api;
@@ -16,13 +17,18 @@ describe('User controller integration test', () => {
     userNinja2 = userFactory('Ninja 2');
   });
 
+  beforeEach(() => {
+    cleanUpMetadata();
+  });
+
   it('should register user and login', async () => {
-    const registerResponse = await api.post('/api/user/register').send(userNinja1);
+    const registerResponse = await api.post('/api/users/register').send(userNinja1);
 
     expect(registerResponse.status).to.be.eq(200);
+    expect(registerResponse.body).to.not.haveOwnProperty('password');
     userNinja1._id = registerResponse.body._id;
 
-    const loginResponse = await api.post('/api/user/login').send(userNinja1);
+    const loginResponse = await api.post('/api/users/login').send(userNinja1);
     expect(loginResponse.status).to.be.eq(200);
 
     const isJwt = isJWT(loginResponse.body);
@@ -39,10 +45,12 @@ describe('User controller integration test', () => {
   });
 
   it('should not register users with same email', async () => {
-    const response1 = await api.post('/api/user/register').send(userNinja2);
-    const response2 = await api.post('/api/user/register').send(userNinja2);
+    const response1 = await api.post('/api/users/register').send(userNinja2);
+    const response2 = await api.post('/api/users/register').send(userNinja2);
 
     expect(response1.status).to.be.eq(200);
     expect(response2.status).to.be.eq(400);
   });
+
+  after(clearDb)
 });

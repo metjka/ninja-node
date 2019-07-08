@@ -1,9 +1,9 @@
-import {inject, injectable} from "inversify";
-import TYPES from "../container/types";
-import {Model} from "mongoose";
-import {IProductModel} from "./product.model";
-import {interfaces, TYPE} from "inversify-express-utils";
-import {ObjectID} from "mongodb";
+import {inject, injectable} from 'inversify';
+import TYPES from '../container/types';
+import {Model} from 'mongoose';
+import {IProduct, IProductModel} from './product.model';
+import {interfaces, TYPE} from 'inversify-express-utils';
+import {ObjectId, ObjectID} from 'mongodb';
 
 @injectable()
 export class ProductService {
@@ -13,22 +13,19 @@ export class ProductService {
   ) {
   }
 
-  public create() {
-
+  public async create(product: IProduct): Promise<IProduct> {
+    const productModel: IProductModel = await new this.productModel(product).save();
+    return productModel.toJSON();
   }
 
-  public delete() {
-
-  }
-
-  public async getById(id: ObjectID): Promise<any> {
-    const product = await this.productModel
+  public async getById(id: ObjectID): Promise<IProduct> {
+    return await this.productModel
       .findById(id)
-      .lean().exec();
-    return product;
+      .lean()
+      .exec();
   }
 
-  public async getAll(page = 0, categories: ObjectID[] = [], productTitle: string = '') {
+  public async getAll(page = 0, categories: ObjectID[] = [], productTitle: string = ''): Promise<any> {
     const aggregations = [
       {
         $match: {
@@ -49,8 +46,11 @@ export class ProductService {
         }
       }
     ];
-    const products = await this.productModel.aggregate(aggregations).exec();
-    return products;
+    return await this.productModel.aggregate(aggregations).exec();
   }
 
+  public async update(id: ObjectId, product: IProduct): Promise<IProduct> {
+    const updatedProduct: IProductModel = await this.productModel.updateOne({_id: id}, product).exec();
+    return updatedProduct.toJSON();
+  }
 }

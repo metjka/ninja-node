@@ -1,0 +1,6 @@
+| Hello #{userName}!
+p You have bought:
+ul
+    each val in orders
+        p #{val.number} #{val.name} for #{val.price} ninjollars per item, in total: #{val.totalPrice} ninjollars.
+p In total: #{total} ninjollars.

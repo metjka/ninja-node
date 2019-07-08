@@ -1,30 +1,14 @@
 import {inject, injectable} from 'inversify';
 import TYPES from '../container/types';
-import {Config} from '../db/mongo';
 import * as jwt from 'jsonwebtoken';
-import {NextFunction, Request, Response} from 'express';
-import {BadTokenError} from '../utils/request.utils';
-
+import {Request} from 'express';
+import {IConfig} from '../utils/interfaces/interfaces';
 
 @injectable()
 export class AuthService {
   constructor(
-    @inject(TYPES.Config) private config: Config
+    @inject(TYPES.Config) private config: IConfig
   ) {
-
-  }
-
-  public validate(req: Request, res: Response, next: NextFunction): void {
-    const token = this.getToken(req);
-    if (!token) {
-      return next(new BadTokenError('Token not found!'));
-    }
-    const verify = jwt.verify(token, this.config.SECRET_KEY) as any;
-    if (!verify) {
-      return next(new BadTokenError('Wrong token!'));
-    }
-    (req as any).user = {_id: verify._id};
-    return next();
   }
 
   public getToken(req: Request): string {
@@ -32,7 +16,7 @@ export class AuthService {
   }
 
   async getUser(token: string): Promise<any> {
-      const verify = jwt.verify(token, this.config.SECRET_KEY) as any;
-      return verify;
+    const verify = jwt.verify(token, this.config.SECRET_KEY) as any;
+    return verify;
   }
 }

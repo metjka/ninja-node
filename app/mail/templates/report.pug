@@ -1,0 +1,9 @@
+| Hello #{userName}!
+
+p how much money was gained: #{gained}
+p number of sold products:
+ul
+    each val in soldProducts
+        p #{val.name}: #{val.timesSold}
+br
+p the best selling product yesterday: #{topSeller.name}: #{topSeller.timesSold}
