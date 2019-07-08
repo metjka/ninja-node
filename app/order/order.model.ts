@@ -43,8 +43,13 @@ export function exportOrderModel(context: interfaces.Context) {
 }
 
 export interface IOrderModel extends Document {
-  orderPositions;
-  orderedBy;
-  createdAt;
-  total;
+  orderPositions: {
+    number: number
+    productId: string
+    price: number,
+    totalPrice?: number
+  }[];
+  orderedBy: string;
+  createdAt: Date;
+  total: number;
 }

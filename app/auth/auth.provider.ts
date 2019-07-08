@@ -15,14 +15,13 @@ export class CustomAuthProvider implements interfaces.AuthProvider {
     res: express.Response,
     next: express.NextFunction
   ): Promise<interfaces.Principal> {
-    const token = this.authService.getToken(req);
+    const token = req.get('Auth');
     if (!token) {
       return new UserPrincipal({});
     }
     try {
       const user = await this.authService.getUser(token);
-      const principal = new UserPrincipal(user);
-      return principal;
+      return new UserPrincipal(user);
     } catch (e) {
       return new UserPrincipal({});
     }

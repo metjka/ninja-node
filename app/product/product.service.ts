@@ -1,9 +1,12 @@
 import {inject, injectable} from 'inversify';
 import TYPES from '../container/types';
 import {Model} from 'mongoose';
+import * as int32 from 'mongoose-int32';
 import {IProduct, IProductModel} from './product.model';
 import {interfaces, TYPE} from 'inversify-express-utils';
 import {ObjectId, ObjectID} from 'mongodb';
+import {NotFoundError} from '../utils/request.utils';
+import * as _ from 'lodash';
 
 @injectable()
 export class ProductService {
@@ -19,38 +22,61 @@ export class ProductService {
   }
 
   public async getById(id: ObjectID): Promise<IProduct> {
-    return await this.productModel
+    const product = await this.productModel
       .findById(id)
       .lean()
       .exec();
+    if (!product) {
+      throw new NotFoundError(`Product with id ${id.toHexString()} was not found!`);
+    }
+    return product;
   }
 
   public async getAll(page = 0, categories: ObjectID[] = [], productTitle: string = ''): Promise<any> {
+    const matchers: any = [
+      {name: {$regex: productTitle, $options: 'i'}}
+    ];
+    if (categories && categories.length) {
+      matchers.push({category: {$in: categories}});
+    }
     const aggregations = [
       {
         $match: {
-          category: {$in: categories},
-          name: {$regex: productTitle}
+          $and: matchers
         }
       },
       {
         $facet: {
           metadata: [
             {$count: 'count'},
-            {$addFields: {page: page}}
+            {$addFields: {page: int32.cast(page)}}
           ],
           data: [
             {$skip: page * 10},
             {$limit: 10}
           ]
         }
+      },
+      {
+        $unwind: {
+          path: '$metadata',
+          preserveNullAndEmptyArrays: true
+        }
       }
     ];
-    return await this.productModel.aggregate(aggregations).exec();
+    return await this.productModel.aggregate(aggregations).exec()
+      .then((res) => {
+        const head: any = _.head(res);
+        head.metadata = head.metadata || {count: 0, page: 0};
+        return head;
+      });
   }
 
   public async update(id: ObjectId, product: IProduct): Promise<IProduct> {
     const updatedProduct: IProductModel = await this.productModel.updateOne({_id: id}, product).exec();
+    if (!updatedProduct) {
+      throw new NotFoundError(`Product with id ${id.toHexString()} was not found!`);
+    }
     return updatedProduct.toJSON();
   }
 }

@@ -12,10 +12,7 @@ import {errorHandler} from './utils/request.utils';
 import {CustomAuthProvider} from './auth/auth.provider';
 import {IConfig} from './utils/interfaces/interfaces';
 import * as  schedule from 'node-schedule';
-import {OrderService} from './order/order.service';
-import {MailService} from './mail/mail.service';
-import {UserService} from './users/user.service';
-import * as moment from 'moment';
+import {sendReport} from './utils/report.utils';
 
 const server = new InversifyExpressServer(container, null, {rootPath: '/api'}, null, CustomAuthProvider);
 
@@ -34,29 +31,9 @@ server.setErrorConfig(errorHandler);
 
 const app = server.build();
 
-export const sendReport = async () => {
-  try {
-    const today = moment().format('YYYY-MMM-DD');
-    const orderService = container.get<OrderService>(TYPES.OrderService);
-    const mailService = container.get<MailService>(TYPES.MailService);
-    const userService = container.get<UserService>(TYPES.UserService);
-    const admins = await userService.gerAdmins();
-    const report = await orderService.getReport();
-    return await Promise.all(admins.map(user => mailService.sendEmailReport(config.SMTP_FROM,
-      user.email,
-      {
-        ...report,
-        fullName: user.fullName
-      },
-      'report',
-      `Report-${today}`
-    )));
-  } catch (e) {
-    console.log(e);
-  }
-};
-
-schedule.scheduleJob('8 * * *', sendReport);
+schedule.scheduleJob('* * 8 * * *', async () => {
+  await sendReport(config);
+});
 
 let instance = app.listen(config.PORT, (err) => {
   if (err) {

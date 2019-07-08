@@ -82,6 +82,20 @@ describe('Product controller integration test', () => {
     expect(createCategoryResponse.status).to.be.eq(403);
   });
 
+  it('should get all products with pagination', async () => {
+    const createCategoryResponse = await api.get('/api/products').set('Auth', ninjaAdminToken);
+    const body = createCategoryResponse.body;
+    expect(body.metadata.count).to.be.eq(3);
+    expect(body.metadata.page).to.be.eq(0);
+  });
+
+  it('should get all products with pagination by title', async () => {
+    const createCategoryResponse = await api.get('/api/products?title=Shuriken').set('Auth', ninjaAdminToken);
+    const body = createCategoryResponse.body;
+    expect(body.metadata.count).to.be.eq(1);
+    expect(body.metadata.page).to.be.eq(0);
+  });
+
 
   after(clearDb)
 });
