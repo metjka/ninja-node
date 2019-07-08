@@ -1,9 +1,9 @@
-import {Connection, Document, Schema} from 'mongoose';
 import {interfaces} from 'inversify';
+import {Connection, Document, Schema} from 'mongoose';
 import TYPES from '../container/types';
 
 const categorySchema = new Schema({
-  name: {type: String, required: true}
+  name: {type: String, required: true},
 });
 
 export function exportCategoryModel(context: interfaces.Context) {

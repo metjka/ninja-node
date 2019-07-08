@@ -1,3 +1,7 @@
+import * as express from 'express';
+import {check, sanitizeQuery} from 'express-validator';
+import {constants} from 'http2';
+import {inject} from 'inversify';
 import {
   controller,
   httpGet,
@@ -7,17 +11,13 @@ import {
   request,
   requestBody,
   requestParam,
-  response
+  response,
 } from 'inversify-express-utils';
-import {inject} from 'inversify';
-import TYPES from '../container/types';
-import {ProductService} from './product.service';
-import {parseObjectId, validate} from '../utils/request.utils';
-import * as express from 'express';
-import {check, sanitizeQuery} from 'express-validator';
 import * as _ from 'lodash';
+import TYPES from '../container/types';
+import {parseObjectId, validate} from '../utils/request.utils';
 import {IProduct} from './product.model';
-import {constants} from 'http2';
+import {ProductService} from './product.service';
 
 const productValidation = [
   check('name').isLength({min: 3}),

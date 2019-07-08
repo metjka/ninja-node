@@ -1,14 +1,14 @@
-import {Connection, Document, Schema} from 'mongoose';
-import {interfaces} from 'inversify';
-import TYPES from '../container/types';
 import {ObjectId} from 'bson';
+import {interfaces} from 'inversify';
+import {Connection, Document, Schema} from 'mongoose';
+import TYPES from '../container/types';
 
 const productSchema = new Schema({
   name: {type: String},
-  imageURL: {type: String},
   price: {type: Number},
+  imageURL: {type: String},
   description: {type: String},
-  category: {type: Schema.Types.ObjectId, ref: `Category`, index: true}
+  category: {type: Schema.Types.ObjectId, ref: `Category`, index: true},
 });
 
 export function exportProductModel(context: interfaces.Context) {
@@ -17,7 +17,7 @@ export function exportProductModel(context: interfaces.Context) {
 }
 
 export interface IProduct {
-  _id: string,
+  _id: string;
   name: string;
   imageURL: string;
   price: number;

@@ -1,10 +1,10 @@
 import * as moment from 'moment';
+import * as PDF from 'pdfkit';
 import container from '../container/container';
-import {OrderService} from '../order/order.service';
 import TYPES from '../container/types';
 import {MailService} from '../mail/mail.service';
+import {OrderService} from '../order/order.service';
 import {UserService} from '../users/user.service';
-import * as PDF from 'pdfkit';
 
 export const sendReport = async (config) => {
   try {
@@ -19,7 +19,7 @@ export const sendReport = async (config) => {
       .text(`how much money was gained:${report.gained}`)
       .moveDown(1)
       .text('number of sold products:');
-    report.soldProducts.forEach(prod => {
+    report.soldProducts.forEach((prod) => {
       pdf.moveDown(1)
         .text(`              ${prod.name}: ${prod.timesSold}`);
     });
@@ -27,13 +27,13 @@ export const sendReport = async (config) => {
       .text(`the best selling product yesterday: ${report.topSeller.name}: ${report.topSeller.timesSold}`);
     pdf.end();
 
-    return await Promise.all(admins.map(user => mailService.sendEmailReport(
+    return await Promise.all(admins.map((user) => mailService.sendEmailReport(
       config.SMTP_FROM,
       user.email,
       report,
       'report',
       `Report-${today}`,
-      pdf
+      pdf,
     )));
   } catch (e) {
     console.log(e);

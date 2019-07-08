@@ -1,9 +1,9 @@
 import {interfaces} from 'inversify-express-utils';
-import {BaseUser} from '../utils/interfaces/interfaces';
 import * as _ from 'lodash';
+import {IBaseUser} from '../utils/interfaces/interfaces';
 
 export class UserPrincipal implements interfaces.Principal {
-  public details: BaseUser;
+  public details: IBaseUser;
 
   public constructor(details: any) {
     this.details = details;

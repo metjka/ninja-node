@@ -1,19 +1,20 @@
 import {Container} from 'inversify';
-import TYPES from './types';
-import {MongoConnection} from '../db/mongo';
-import {UserService} from '../users/user.service';
-import {exportUserModel} from '../users/user.model';
-import {AuthService} from '../auth/auth.service';
-import {exportProductModel} from '../product/product.model';
-import {AuthMiddleware} from '../auth/auth.middleware';
-import {exportCategoryModel} from '../category/category.model';
 import {AdminMiddleware} from '../auth/admin.middleware';
-import {ProductService} from '../product/product.service';
+import {AuthMiddleware} from '../auth/auth.middleware';
+import {AuthService} from '../auth/auth.service';
+import {exportCategoryModel} from '../category/category.model';
 import {CategoryService} from '../category/category.service';
-import {OrderService} from '../order/order.service';
-import {exportOrderModel} from '../order/order.model';
+import {MongoConnection} from '../db/mongo';
 import {MailService} from '../mail/mail.service';
+import {exportOrderModel} from '../order/order.model';
+import {OrderService} from '../order/order.service';
+import {exportProductModel} from '../product/product.model';
+import {ProductService} from '../product/product.service';
+import {exportUserModel} from '../users/user.model';
+import {UserService} from '../users/user.service';
+import TYPES from './types';
 
+// tslint:disable-next-line:no-var-requires
 const config = require('../../config.json');
 
 const container = new Container({defaultScope: 'Request'});
@@ -24,7 +25,7 @@ container.bind(TYPES.AuthMiddleware).to(AuthMiddleware);
 
 container.bind(TYPES.Config).toConstantValue(config);
 
-container.bind(TYPES.MongoConnection).toConstantValue(new MongoConnection(config).connection);
+container.bind(TYPES.MongoConnection).toConstantValue(new MongoConnection(config).getConnection());
 
 container.bind(TYPES.UserModel).toDynamicValue(exportUserModel).inSingletonScope();
 container.bind(TYPES.ProductModel).toDynamicValue(exportProductModel).inSingletonScope();

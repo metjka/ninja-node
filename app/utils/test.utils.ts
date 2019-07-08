@@ -1,18 +1,18 @@
 import * as uuid from 'uuid';
-import container from '../container/container';
-import {IUserModel} from '../users/user.model';
-import TYPES from '../container/types';
 import {ICategoryModel} from '../category/category.model';
-import {IProductModel} from '../product/product.model';
+import container from '../container/container';
+import TYPES from '../container/types';
 import {IOrderModel} from '../order/order.model';
+import {IProductModel} from '../product/product.model';
+import {IUserModel} from '../users/user.model';
 
 export function userFactory(login: string) {
   return {
     fullName: login,
     login: `${login}-${uuid.v4()}`,
     email: `${uuid.v4()}@test.com`,
-    password: uuid.v4()
-  }
+    password: uuid.v4(),
+  };
 }
 
 export function registerAndLoginUser(api, user) {
@@ -32,8 +32,12 @@ export const clearDb = async () => {
   const CategoryModel = container.get<ICategoryModel>(TYPES.CategoryModel);
   const ProductModel = container.get<IProductModel>(TYPES.ProductModel);
   const OrderModel = container.get<IOrderModel>(TYPES.OrderModel);
-  await UserModel.collection.drop().catch(err => console.log(`${UserModel.collection.collectionName} doesn't exist`));
-  await CategoryModel.collection.drop().catch(err => console.log(`${CategoryModel.collection.collectionName} doesn't exist`));
-  await ProductModel.collection.drop().catch(err => console.log(`${ProductModel.collection.collectionName} doesn't exist`));
-  await OrderModel.collection.drop().catch(err => console.log(`${OrderModel.collection.collectionName} doesn't exist`));
+  await UserModel.collection.drop()
+    .catch((err) => console.log(`${UserModel.collection.collectionName} doesn't exist`));
+  await CategoryModel.collection.drop()
+    .catch((err) => console.log(`${CategoryModel.collection.collectionName} doesn't exist`));
+  await ProductModel.collection.drop()
+    .catch((err) => console.log(`${ProductModel.collection.collectionName} doesn't exist`));
+  await OrderModel.collection.drop()
+    .catch((err) => console.log(`${OrderModel.collection.collectionName} doesn't exist`));
 };

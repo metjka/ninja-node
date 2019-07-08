@@ -12,6 +12,6 @@ const TYPES = {
   CategoryService: 'CategoryService',
   OrderService: 'OrderService',
   OrderModel: 'OrderModel',
-  MailService: 'MailService'
+  MailService: 'MailService',
 };
-export default TYPES
+export default TYPES;
