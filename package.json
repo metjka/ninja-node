@@ -36,7 +36,6 @@
   },
   "devDependencies": {
     "@types/bcryptjs": "2.4.2",
-    "@types/pdfkit": "0.7.36",
     "@types/body-parser": "1.17.0",
     "@types/chai": "4.1.7",
     "@types/express": "4.17.0",
@@ -48,14 +47,15 @@
     "@types/mongoose": "5.5.7",
     "@types/node-schedule": "1.2.3",
     "@types/nodemailer": "6.2.0",
+    "@types/pdfkit": "0.7.36",
     "@types/pug": "2.0.4",
     "chai": "4.2.0",
-    "mocha": "^6.1.4",
-    "tslint": "^5.18.0",
+    "mocha": "^6.2.2",
     "nyc": "14.1.1",
     "supertest": "4.0.2",
     "ts-node": "8.3.0",
+    "tslint": "^5.20.0",
     "typescript": "3.5.2",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.3"
   }
 }
